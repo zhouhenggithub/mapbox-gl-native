@@ -13,7 +13,7 @@
 #import "NSDate+MGLAdditions.h"
 #import "NSData+MGLAdditions.h"
 
-#if TARGET_OS_IPHONE || TARGET_OS_SIMULATOR
+#if TARGET_OS_IOS
 #import "MMEConstants.h"
 #import "MGLMapboxEvents.h"
 #endif
@@ -367,17 +367,17 @@ const MGLExceptionName MGLUnsupportedRegionTypeException = @"MGLUnsupportedRegio
         if (completion) {
             completion(pack, error);
         }
-            
-        #if TARGET_OS_IPHONE || TARGET_OS_SIMULATOR
-            NSMutableDictionary *offlineDownloadStartEventAttributes = [NSMutableDictionary dictionaryWithObject:MMEventTypeOfflineDownloadStart forKey:MMEEventKeyEvent];
         
-            if ([region conformsToProtocol:@protocol(MGLOfflineRegion_Private)]) {
-                NSDictionary *regionAttributes = ((id<MGLOfflineRegion_Private>)region).offlineStartEventAttributes;
-                [offlineDownloadStartEventAttributes addEntriesFromDictionary:regionAttributes];
-            }
+#if TARGET_OS_IOS
+        NSMutableDictionary *offlineDownloadStartEventAttributes = [NSMutableDictionary dictionaryWithObject:MMEventTypeOfflineDownloadStart forKey:MMEEventKeyEvent];
         
-            [MGLMapboxEvents pushEvent:MMEventTypeOfflineDownloadStart withAttributes:offlineDownloadStartEventAttributes];
-        #endif
+        if ([region conformsToProtocol:@protocol(MGLOfflineRegion_Private)]) {
+            NSDictionary *regionAttributes = ((id<MGLOfflineRegion_Private>)region).offlineStartEventAttributes;
+            [offlineDownloadStartEventAttributes addEntriesFromDictionary:regionAttributes];
+        }
+        
+        [MGLMapboxEvents pushEvent:MMEventTypeOfflineDownloadStart withAttributes:offlineDownloadStartEventAttributes];
+#endif
     }];
 }
 
