@@ -3839,7 +3839,7 @@
 					"$(mbgl_core_LINK_LIBRARIES)",
 					"$(mbgl_filesource_LINK_LIBRARIES)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mapbox.sdk.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mapbox.MapboxGL;
 				PRODUCT_NAME = Mapbox;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
@@ -3882,7 +3882,7 @@
 					"$(mbgl_core_LINK_LIBRARIES)",
 					"$(mbgl_filesource_LINK_LIBRARIES)",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.mapbox.sdk.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mapbox.MapboxGL;
 				PRODUCT_NAME = Mapbox;
 				SKIP_INSTALL = YES;
 				SWIFT_VERSION = 3.0;
@@ -3895,7 +3895,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = "framework/Info-static.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = com.mapbox.sdk.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mapbox.MapboxGL;
 				PRODUCT_NAME = Mapbox;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
@@ -3906,7 +3906,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				INFOPLIST_FILE = "framework/Info-static.plist";
-				PRODUCT_BUNDLE_IDENTIFIER = com.mapbox.sdk.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.mapbox.MapboxGL;
 				PRODUCT_NAME = Mapbox;
 				SKIP_INSTALL = YES;
 				WRAPPER_EXTENSION = bundle;
