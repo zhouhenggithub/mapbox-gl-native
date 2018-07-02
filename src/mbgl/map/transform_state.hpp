@@ -62,7 +62,9 @@ public:
     double getMaxPitch() const;
 
     // Rotation
-    float getAngle() const;
+    float getBearing() const;
+    void setBearing(double bearing);
+
     float getFieldOfView() const;
     float getCameraToCenterDistance() const;
     float getPitch() const;
@@ -126,7 +128,7 @@ private:
 
     // map position
     double x = 0, y = 0;
-    double angle = 0;
+    double bearing = 0;
     double scale = 1;
     // This fov value is somewhat arbitrary. The altitude of the camera used
     // to be defined as 1.5 screen heights above the ground, which was an

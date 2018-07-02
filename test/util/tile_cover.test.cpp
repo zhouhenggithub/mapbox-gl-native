@@ -36,11 +36,11 @@ TEST(TileCover, Pitch) {
     // slightly offset center so that tile order is better defined
     transform.setLatLng({ 0.1, -0.1 });
     transform.setZoom(2);
-    transform.setAngle(5.0);
-    transform.setPitch(40.0 * M_PI / 180.0);
+    transform.setBearing(-5.0 * util::DEG2RAD);
+    transform.setPitch(40.0 * util::DEG2RAD);
 
     EXPECT_EQ((std::vector<UnwrappedTileID>{
-        { 2, 1, 2 }, { 2, 1, 1 }, { 2, 2, 2 }, { 2, 2, 1 }, { 2, 3, 2 }
+        { 2, 1, 2 }, { 2, 1, 1 }, { 2, 2, 2 }, { 2, 2, 1 }
     }),
               util::tileCover(transform.getState(), 2));
 }
