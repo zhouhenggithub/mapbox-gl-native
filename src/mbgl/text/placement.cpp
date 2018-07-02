@@ -338,7 +338,7 @@ void Placement::updateBucketOpacities(SymbolBucket& bucket, std::set<uint32_t>& 
     }
 
     bucket.updateOpacity();
-    bucket.sortFeatures(state.getAngle());
+    bucket.sortFeatures(state.getBearing());
     auto retainedData = retainedQueryData.find(bucket.bucketInstanceId);
     if (retainedData != retainedQueryData.end()) {
         retainedData->second.featureSortOrder = bucket.featureSortOrder;
