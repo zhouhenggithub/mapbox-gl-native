@@ -73,15 +73,15 @@ public:
     double getMaxPitch() const;
 
     // Rotation
-    float getBearing() const;
+    double getBearing() const;
     void setBearing(double bearing);
 
     // Camera
-    float getFieldOfView() const;
-    float getCameraToCenterDistance() const;
+    double getFieldOfView() const;
+    double getCameraToCenterDistance() const;
 
     // Tilt
-    float getPitch() const;
+    double getPitch() const;
     void setPitch(double pitch);
 
     // State
@@ -104,8 +104,8 @@ public:
         return !size.isEmpty() && (scale >= min_scale && scale <= max_scale);
     }
 
-    float getCameraToTileDistance(const UnwrappedTileID&) const;
-    float maxPitchScaleFactor() const;
+    double getCameraToTileDistance(const UnwrappedTileID&) const;
+    double maxPitchScaleFactor() const;
 
     /** Recenter the map so that the given coordinate is located at the given
         point on screen. */

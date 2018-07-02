@@ -44,8 +44,7 @@ void TransformState::getProjMatrix(mat4& projMatrix, uint16_t nearZ, bool aligne
 
     // Calculate z distance of the farthest fragment that should be rendered.
     const double furthestDistance = std::cos(M_PI / 2 - getPitch()) * topHalfSurfaceDistance + cameraToCenterDistance;
-    // Add a bit extra to avoid precision problems when a fragment's distance is exactly `furthestDistance`
-    const double farZ = furthestDistance * 1.01;
+    const double farZ = furthestDistance;
 
     const double aspect = double(size.width) / size.height;
     matrix::perspective(projMatrix, getFieldOfView(), aspect, nearZ, farZ);
@@ -275,7 +274,7 @@ double TransformState::getMaxPitch() const {
 
 #pragma mark - Rotation
 
-float TransformState::getBearing() const {
+double TransformState::getBearing() const {
     return bearing;
 }
 
@@ -283,15 +282,15 @@ void TransformState::setBearing(double bearing_) {
     bearing = bearing_;
 }
 
-float TransformState::getFieldOfView() const {
+double TransformState::getFieldOfView() const {
     return fov;
 }
 
-float TransformState::getCameraToCenterDistance() const {
+double TransformState::getCameraToCenterDistance() const {
     return 0.5 * size.height / std::tan(fov / 2.0);
 }
 
-float TransformState::getPitch() const {
+double TransformState::getPitch() const {
     return pitch;
 }
 
@@ -389,7 +388,7 @@ LatLng TransformState::screenCoordinateToLatLng(const ScreenCoordinate& point, L
 mat4 TransformState::coordinatePointMatrix(double z) const {
     mat4 proj;
     getProjMatrix(proj);
-    float s = Projection::worldSize(scale) / std::pow(2, z);
+    double s = Projection::worldSize(scale) / zoomScale(z);
     matrix::scale(proj, proj, s, s, 1);
     matrix::multiply(proj, getPixelMatrix(), proj);
     return proj;
@@ -465,7 +464,7 @@ void TransformState::setLatLngZoom(const LatLng& latLng, const EdgeInsets &paddi
     constrainToViewport();
 }
 
-float TransformState::getCameraToTileDistance(const UnwrappedTileID& tileID) const {
+double TransformState::getCameraToTileDistance(const UnwrappedTileID& tileID) const {
     mat4 projectionMatrix;
     getProjMatrix(projectionMatrix);
     mat4 tileProjectionMatrix;
@@ -477,11 +476,11 @@ float TransformState::getCameraToTileDistance(const UnwrappedTileID& tileID) con
     return projectedCenter[3];
 }
 
-float TransformState::maxPitchScaleFactor() const {
+double TransformState::maxPitchScaleFactor() const {
     if (size.isEmpty()) {
         return {};
     }
-    auto latLng = screenCoordinateToLatLng({ 0, static_cast<float>(getSize().height) });
+    auto latLng = screenCoordinateToLatLng({ 0, static_cast<double>(getSize().height) });
     mat4 mat = coordinatePointMatrix(getZoom());
     Point<double> pt = Projection::project(latLng, scale) / util::tileSize;
     vec4 p = {{ pt.x, pt.y, 0, 1 }};
