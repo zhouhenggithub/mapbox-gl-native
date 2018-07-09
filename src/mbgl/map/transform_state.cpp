@@ -32,26 +32,28 @@ void TransformState::getProjMatrix(mat4& projMatrix, uint16_t nearZ, bool aligne
         return;
     }
 
+    const double cameraToCenterDistance = getCameraToCenterDistance();
+
      // Find the distance from the center point [width/2, height/2] to the
     // center top point [width/2, 0] in Z units, using the law of sines.
     // 1 Z unit is equivalent to 1 horizontal px at the center of the map
     // (the distance between[width/2, height/2] and [width/2 + 1, height/2])
     const double halfFov = getFieldOfView() / 2.0;
     const double groundAngle = M_PI / 2.0 + getPitch();
-    const double topHalfSurfaceDistance = std::sin(halfFov) * getCameraToCenterDistance() / std::sin(M_PI - groundAngle - halfFov);
-
+    const double topHalfSurfaceDistance = std::sin(halfFov) * cameraToCenterDistance / std::sin(M_PI - groundAngle - halfFov);
 
     // Calculate z distance of the farthest fragment that should be rendered.
-    const double furthestDistance = std::cos(M_PI / 2 - getPitch()) * topHalfSurfaceDistance + getCameraToCenterDistance();
+    const double furthestDistance = std::cos(M_PI / 2 - getPitch()) * topHalfSurfaceDistance + cameraToCenterDistance;
     // Add a bit extra to avoid precision problems when a fragment's distance is exactly `furthestDistance`
     const double farZ = furthestDistance * 1.01;
 
-    matrix::perspective(projMatrix, getFieldOfView(), double(size.width) / size.height, nearZ, farZ);
+    const double aspect = double(size.width) / size.height;
+    matrix::perspective(projMatrix, getFieldOfView(), aspect, nearZ, farZ);
 
     const bool flippedY = viewportMode == ViewportMode::FlippedY;
     matrix::scale(projMatrix, projMatrix, 1, flippedY ? 1 : -1, 1);
 
-    matrix::translate(projMatrix, projMatrix, 0, 0, -getCameraToCenterDistance());
+    matrix::translate(projMatrix, projMatrix, 0, 0, -cameraToCenterDistance);
 
     using NO = NorthOrientation;
     switch (getNorthOrientation()) {
@@ -63,8 +65,12 @@ void TransformState::getProjMatrix(mat4& projMatrix, uint16_t nearZ, bool aligne
 
     matrix::rotate_z(projMatrix, projMatrix, getBearing() + getNorthOrientationAngle());
 
-    const double dx = pixel_x() - size.width / 2.0f, dy = pixel_y() - size.height / 2.0f;
-    matrix::translate(projMatrix, projMatrix, dx, dy, 0);
+    const double worldSize = Projection::worldSize(scale);
+    Point<double> pixel = {
+        position.x - ((size.width / 2.0) / size.width * worldSize),
+        position.y - ((size.height / 2.0) / size.height * worldSize)
+    };
+    matrix::translate(projMatrix, projMatrix, pixel.x, pixel.y, 0);
 
     if (axonometric) {
         // mat[11] controls perspective
@@ -88,8 +94,8 @@ void TransformState::getProjMatrix(mat4& projMatrix, uint16_t nearZ, bool aligne
         const float xShift = float(size.width % 2) / 2, yShift = float(size.height % 2) / 2;
         const double bearingCos = std::cos(bearing), bearingSin = std::sin(bearing);
         double devNull;
-        const float dxa = -std::modf(dx, &devNull) + bearingCos * xShift + bearingSin * yShift;
-        const float dya = -std::modf(dy, &devNull) + bearingCos * yShift + bearingSin * xShift;
+        const float dxa = -std::modf(pixel.x, &devNull) + bearingCos * xShift + bearingSin * yShift;
+        const float dya = -std::modf(pixel.y, &devNull) + bearingCos * yShift + bearingSin * xShift;
         matrix::translate(projMatrix, projMatrix, dxa > 0.5 ? dxa - 1 : dxa, dya > 0.5 ? dya - 1 : dya, 0);
     }
 }
@@ -102,7 +108,7 @@ Size TransformState::getSize() const {
 
 void TransformState::setSize(const Size& size_) {
     size = size_;
-    constrain(scale, x, y);
+    constrain(scale, position.x, position.y);
 }
 
 #pragma mark - North Orientation
@@ -113,7 +119,7 @@ NorthOrientation TransformState::getNorthOrientation() const {
 
 void TransformState::setNorthOrientation(NorthOrientation orientation_) {
     orientation = orientation_;
-    constrain(scale, x, y);
+    constrain(scale, position.x, position.y);
 }
 
 double TransformState::getNorthOrientationAngle() const {
@@ -136,7 +142,7 @@ ConstrainMode TransformState::getConstrainMode() const {
 
 void TransformState::setConstrainMode(ConstrainMode constrainMode_) {
     constrainMode = constrainMode_;
-    constrain(scale, x, y);
+    constrain(scale, position.x, position.y);
 }
 
 #pragma mark - ViewportMode
@@ -179,20 +185,10 @@ double TransformState::getYSkew() const {
 
 LatLng TransformState::getLatLng(LatLng::WrapMode wrapMode) const {
     return {
-        util::RAD2DEG * (2 * std::atan(std::exp(y / Cc)) - 0.5 * M_PI),
-        -x / Bc,
+        util::RAD2DEG * (2 * std::atan(std::exp(position.y / Cc)) - 0.5 * M_PI),
+        -position.x / Bc,
         wrapMode
     };
-}
-
-double TransformState::pixel_x() const {
-    const double center = (size.width - Projection::worldSize(scale)) / 2;
-    return center + x;
-}
-
-double TransformState::pixel_y() const {
-    const double center = (size.height - Projection::worldSize(scale)) / 2;
-    return center + y;
 }
 
 #pragma mark - Zoom
@@ -230,8 +226,8 @@ void TransformState::setMinZoom(const double minZoom) {
 
 double TransformState::getMinZoom() const {
     double test_scale = min_scale;
-    double unused_x = x;
-    double unused_y = y;
+    double unused_x = position.x;
+    double unused_y = position.y;
     constrain(test_scale, unused_x, unused_y);
 
     return scaleZoom(test_scale);
@@ -455,8 +451,8 @@ void TransformState::setScalePoint(const double newScale, const ScreenCoordinate
     constrain(constrainedScale, constrainedPoint.x, constrainedPoint.y);
 
     scale = constrainedScale;
-    x = constrainedPoint.x;
-    y = constrainedPoint.y;
+    position.x = constrainedPoint.x;
+    position.y = constrainedPoint.y;
     Bc = Projection::worldSize(scale) / util::DEGREES_MAX;
     Cc = Projection::worldSize(scale) / util::M2PI;
 }
