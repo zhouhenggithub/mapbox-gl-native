@@ -160,10 +160,6 @@ uint8_t TransformState::getIntegerZoom() const {
     return getZoom();
 }
 
-double TransformState::getZoomFraction() const {
-    return getZoom() - getIntegerZoom();
-}
-
 #pragma mark - Bounds
 
 void TransformState::setLatLngBounds(optional<LatLngBounds> bounds_) {
