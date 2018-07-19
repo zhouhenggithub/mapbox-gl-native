@@ -40,7 +40,7 @@ TEST(TileCover, Pitch) {
     transform.setPitch(40.0 * util::DEG2RAD);
 
     EXPECT_EQ((std::vector<UnwrappedTileID>{
-        { 2, 1, 2 }, { 2, 1, 1 }, { 2, 2, 2 }, { 2, 2, 1 }
+        { 2, 1, 1 }, { 2, 1, 2 }, { 2, 2, 1 }, { 2, 2, 2 }
     }),
               util::tileCover(transform.getState(), 2));
 }
