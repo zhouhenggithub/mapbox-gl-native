@@ -121,6 +121,7 @@ set(MBGL_CORE_FILES
 
     # math
     include/mbgl/math/clamp.hpp
+    include/mbgl/math/compare.hpp
     include/mbgl/math/log2.hpp
     include/mbgl/math/minmax.hpp
     include/mbgl/math/wrap.hpp
