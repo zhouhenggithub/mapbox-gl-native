@@ -4,6 +4,7 @@
 #include <mbgl/map/transform_state.hpp>
 #include <mbgl/util/tile_cover_impl.hpp>
 #include <mbgl/util/tile_coordinate.hpp>
+#include <mbgl/math/compare.hpp>
 
 #include <functional>
 #include <list>
@@ -34,7 +35,8 @@ struct edge {
 
 // scan-line conversion
 static void scanSpans(edge e0, edge e1, int32_t ymin, int32_t ymax, ScanLine scanLine) {
-    double y0 = util::max(double(ymin), std::floor(e1.y0));
+    bool fuzzyIsNull = util::fuzzyIsNull(e1.y0);
+    double y0 = util::max(double(ymin), fuzzyIsNull ? 0.0 : std::floor(e1.y0));
     double y1 = util::min(double(ymax), std::ceil(e1.y1));
 
     // sort edges by x-coordinate
@@ -52,7 +54,8 @@ static void scanSpans(edge e0, edge e1, int32_t ymin, int32_t ymax, ScanLine sca
     for (int32_t y = y0; y < y1; y++) {
         double x0 = m0 * util::max(0.0, util::min(e0.dy, y + d0 - e0.y0)) + e0.x0;
         double x1 = m1 * util::max(0.0, util::min(e1.dy, y + d1 - e1.y0)) + e1.x0;
-        scanLine(std::floor(x1), std::ceil(x0), y);
+        fuzzyIsNull = util::fuzzyIsNull(x1);
+        scanLine(fuzzyIsNull ? 0.0 : std::floor(x1), std::ceil(x0), y);
     }
 }
 

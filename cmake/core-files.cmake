@@ -124,6 +124,7 @@ set(MBGL_CORE_FILES
     include/mbgl/math/log2.hpp
     include/mbgl/math/minmax.hpp
     include/mbgl/math/wrap.hpp
+    include/mbgl/math/compare.hpp
     src/mbgl/math/log2.cpp
 
     # parsedate
