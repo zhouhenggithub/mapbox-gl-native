@@ -95,6 +95,10 @@ bool RenderLayer::needsClipping() const {
     return false;
 }
 
+void RenderLayer::update() {
+    // no-op
+}
+
 RenderLayer::RenderTiles RenderLayer::filterRenderTiles(RenderTiles tiles, FilterFunctionPtr filterFn) const {
     assert(filterFn != nullptr);
     RenderTiles filtered;
