@@ -12,6 +12,8 @@ public abstract class Source {
   @Keep
   private long nativePtr;
 
+  protected boolean detached;
+
   /**
    * Internal use
    *
@@ -71,4 +73,8 @@ public abstract class Source {
 
   @Keep
   protected native String nativeGetAttribution();
+
+  public void setDetached() {
+    detached = true;
+  }
 }
