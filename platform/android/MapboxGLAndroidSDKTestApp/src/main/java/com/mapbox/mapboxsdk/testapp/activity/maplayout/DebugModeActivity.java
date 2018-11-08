@@ -92,6 +92,7 @@ public class DebugModeActivity extends AppCompatActivity implements OnMapReadyCa
     mapView.setStyleUrl(STYLES[currentStyleIndex]);
     mapView.onCreate(savedInstanceState);
     mapView.getMapAsync(this);
+    mapView.addOnDidFinishLoadingStyleListener(() -> Timber.d("Style loaded"));
   }
 
   @Override
@@ -159,7 +160,7 @@ public class DebugModeActivity extends AppCompatActivity implements OnMapReadyCa
         if (currentStyleIndex == STYLES.length) {
           currentStyleIndex = 0;
         }
-        mapboxMap.setStyleUrl(STYLES[currentStyleIndex], style -> Timber.d("Style loaded %s", style));
+        mapboxMap.setStyleUrl(STYLES[currentStyleIndex]);
       }
     });
   }
