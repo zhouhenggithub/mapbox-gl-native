@@ -90,7 +90,6 @@ public class TextureViewDebugModeActivity extends AppCompatActivity implements O
     });
 
     mapView.setTag(true);
-    mapView.setStyleUrl(STYLES[currentStyleIndex]);
     mapView.onCreate(savedInstanceState);
     mapView.getMapAsync(this);
   }
@@ -98,7 +97,7 @@ public class TextureViewDebugModeActivity extends AppCompatActivity implements O
   @Override
   public void onMapReady(MapboxMap map) {
     mapboxMap = map;
-
+    mapboxMap.setStyle(new Style.Builder().withStyleUrl(STYLES[currentStyleIndex]));
     setupNavigationView(mapboxMap.getStyle().getLayers());
     setupZoomView();
     setFpsView();
@@ -110,7 +109,7 @@ public class TextureViewDebugModeActivity extends AppCompatActivity implements O
   }
 
   private void setupNavigationView(List<Layer> layerList) {
-    Timber.v("New style loaded with JSON: %s", mapboxMap.getStyleJson());
+    Timber.v("New style loaded with JSON: %s", mapboxMap.getStyle().getJson());
     final LayerListAdapter adapter = new LayerListAdapter(this, layerList);
     ListView listView = findViewById(R.id.listView);
     listView.setAdapter(adapter);
@@ -160,7 +159,7 @@ public class TextureViewDebugModeActivity extends AppCompatActivity implements O
         if (currentStyleIndex == STYLES.length) {
           currentStyleIndex = 0;
         }
-        mapboxMap.setStyleUrl(STYLES[currentStyleIndex]);
+        mapboxMap.setStyle(new Style.Builder().withStyleUrl(STYLES[currentStyleIndex]));
       }
     });
   }

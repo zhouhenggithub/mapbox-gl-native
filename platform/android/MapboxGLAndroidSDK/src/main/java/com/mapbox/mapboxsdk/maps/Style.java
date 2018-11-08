@@ -44,14 +44,18 @@ public class Style {
     nativeMapView.setStyleUrl(styleUrl);
   }
 
-  @Nullable
-  public String getUrl(){
+  @NonNull
+  public String getUrl() {
     return nativeMapView.getStyleUrl();
   }
 
-  @Nullable
-  public String getJson(){
+  @NonNull
+  public String getJson() {
     return nativeMapView.getStyleJson();
+  }
+
+  public boolean isInitialised(){
+    return !(getUrl().isEmpty() && getJson().isEmpty() && layers.isEmpty());
   }
 
   //
@@ -383,8 +387,8 @@ public class Style {
      * @param url The URL of the map style
      * @see Style
      */
-    public Builder withStyleUrl(@StyleUrl String url) {
-      this.styleUrl = styleUrl;
+    public Builder withStyleUrl(String url) {
+      this.styleUrl = url;
       return this;
     }
 
@@ -429,6 +433,13 @@ public class Style {
       if (transitionOptions != null) {
         style.setTransition(transitionOptions);
       }
+
+      if (styleUrl != null) {
+        nativeMapView.setStyleUrl(styleUrl);
+      } else if (styleJson != null) {
+        nativeMapView.setStyleJson(styleJson);
+      }
+
       return style;
     }
 

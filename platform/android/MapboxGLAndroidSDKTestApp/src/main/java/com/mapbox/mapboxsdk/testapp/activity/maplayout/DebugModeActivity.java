@@ -89,7 +89,6 @@ public class DebugModeActivity extends AppCompatActivity implements OnMapReadyCa
     });
 
     mapView.setTag(true);
-    mapView.setStyleUrl(STYLES[currentStyleIndex]);
     mapView.onCreate(savedInstanceState);
     mapView.getMapAsync(this);
     mapView.addOnDidFinishLoadingStyleListener(() -> Timber.d("Style loaded"));
@@ -98,7 +97,7 @@ public class DebugModeActivity extends AppCompatActivity implements OnMapReadyCa
   @Override
   public void onMapReady(MapboxMap map) {
     mapboxMap = map;
-
+    mapboxMap.setStyle(new Style.Builder().withStyleUrl(STYLES[currentStyleIndex]));
     setupNavigationView(mapboxMap.getStyle().getLayers());
     setupZoomView();
     setFpsView();
@@ -112,7 +111,7 @@ public class DebugModeActivity extends AppCompatActivity implements OnMapReadyCa
   }
 
   private void setupNavigationView(List<Layer> layerList) {
-    Timber.v("New style loaded with JSON: %s", mapboxMap.getStyleJson());
+    Timber.v("New style loaded with JSON: %s", mapboxMap.getStyle().getJson());
     final LayerListAdapter adapter = new LayerListAdapter(this, layerList);
     ListView listView = findViewById(R.id.listView);
     listView.setAdapter(adapter);
@@ -160,7 +159,7 @@ public class DebugModeActivity extends AppCompatActivity implements OnMapReadyCa
         if (currentStyleIndex == STYLES.length) {
           currentStyleIndex = 0;
         }
-        mapboxMap.setStyleUrl(STYLES[currentStyleIndex]);
+        mapboxMap.setStyle(new Style.Builder().withStyleUrl(STYLES[currentStyleIndex]));
       }
     });
   }

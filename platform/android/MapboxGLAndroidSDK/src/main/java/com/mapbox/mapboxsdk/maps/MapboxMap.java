@@ -179,6 +179,11 @@ public final class MapboxMap {
    */
   void onPostMapReady() {
     invalidateCameraPosition();
+
+    // load default style
+    if (!style.isInitialised()) {
+      setStyle(new Style.Builder().withStyleUrl(Style.MAPBOX_STREETS));
+    }
   }
 
   /**
