@@ -301,7 +301,7 @@ public class LocationLayerControllerTest {
   public void onNewLatLngValue_locationFeatureIsUpdated() {
     GeoJsonSource locationSource = mock(GeoJsonSource.class);
     MapboxMap mapboxMap = mock(MapboxMap.class);
-    when(mapboxMap.getSourceAs(LOCATION_SOURCE)).thenReturn(locationSource);
+    when(mapboxMap.getStyle().getSourceAs(LOCATION_SOURCE)).thenReturn(locationSource);
     LayerSourceProvider sourceProvider = buildLayerProvider();
     when(sourceProvider.generateSource(any(Feature.class))).thenReturn(locationSource);
     LayerBitmapProvider bitmapProvider = mock(LayerBitmapProvider.class);
@@ -321,7 +321,7 @@ public class LocationLayerControllerTest {
   public void onNewGpsBearingValue_locationFeatureIsUpdated() {
     GeoJsonSource locationSource = mock(GeoJsonSource.class);
     MapboxMap mapboxMap = mock(MapboxMap.class);
-    when(mapboxMap.getSourceAs(LOCATION_SOURCE)).thenReturn(locationSource);
+    when(mapboxMap.getStyle().getSourceAs(LOCATION_SOURCE)).thenReturn(locationSource);
     LayerSourceProvider sourceProvider = buildLayerProvider();
     when(sourceProvider.generateSource(any(Feature.class))).thenReturn(locationSource);
     LayerBitmapProvider bitmapProvider = mock(LayerBitmapProvider.class);
@@ -342,7 +342,7 @@ public class LocationLayerControllerTest {
   public void onNewGpsBearingValue_updateIgnoredWithInvalidRenderMode() {
     GeoJsonSource locationSource = mock(GeoJsonSource.class);
     MapboxMap mapboxMap = mock(MapboxMap.class);
-    when(mapboxMap.getSourceAs(LOCATION_SOURCE)).thenReturn(locationSource);
+    when(mapboxMap.getStyle().getSourceAs(LOCATION_SOURCE)).thenReturn(locationSource);
     LayerSourceProvider sourceProvider = buildLayerProvider();
     when(sourceProvider.generateSource(any(Feature.class))).thenReturn(locationSource);
     LayerBitmapProvider bitmapProvider = mock(LayerBitmapProvider.class);
@@ -363,7 +363,7 @@ public class LocationLayerControllerTest {
   public void onNewCompassBearingValue_locationFeatureIsUpdated() {
     GeoJsonSource locationSource = mock(GeoJsonSource.class);
     MapboxMap mapboxMap = mock(MapboxMap.class);
-    when(mapboxMap.getSourceAs(LOCATION_SOURCE)).thenReturn(locationSource);
+    when(mapboxMap.getStyle().getSourceAs(LOCATION_SOURCE)).thenReturn(locationSource);
     LayerSourceProvider sourceProvider = buildLayerProvider();
     when(sourceProvider.generateSource(any(Feature.class))).thenReturn(locationSource);
     LayerBitmapProvider bitmapProvider = mock(LayerBitmapProvider.class);
@@ -384,7 +384,7 @@ public class LocationLayerControllerTest {
   public void onNewCompassBearingValue_updateIgnoredWithInvalidRenderMode() {
     GeoJsonSource locationSource = mock(GeoJsonSource.class);
     MapboxMap mapboxMap = mock(MapboxMap.class);
-    when(mapboxMap.getSourceAs(LOCATION_SOURCE)).thenReturn(locationSource);
+    when(mapboxMap.getStyle().getSourceAs(LOCATION_SOURCE)).thenReturn(locationSource);
     LayerSourceProvider sourceProvider = buildLayerProvider();
     when(sourceProvider.generateSource(any(Feature.class))).thenReturn(locationSource);
     LayerBitmapProvider bitmapProvider = mock(LayerBitmapProvider.class);
@@ -405,7 +405,7 @@ public class LocationLayerControllerTest {
   public void onNewAccuracyRadiusValue_locationFeatureIsUpdated() {
     GeoJsonSource locationSource = mock(GeoJsonSource.class);
     MapboxMap mapboxMap = mock(MapboxMap.class);
-    when(mapboxMap.getSourceAs(LOCATION_SOURCE)).thenReturn(locationSource);
+    when(mapboxMap.getStyle().getSourceAs(LOCATION_SOURCE)).thenReturn(locationSource);
     LayerSourceProvider sourceProvider = buildLayerProvider();
     when(sourceProvider.generateSource(any(Feature.class))).thenReturn(locationSource);
     LayerBitmapProvider bitmapProvider = mock(LayerBitmapProvider.class);
@@ -425,7 +425,7 @@ public class LocationLayerControllerTest {
   public void onNewAccuracyRadiusValue_updateIgnoredWithInvalidRenderMode() {
     GeoJsonSource locationSource = mock(GeoJsonSource.class);
     MapboxMap mapboxMap = mock(MapboxMap.class);
-    when(mapboxMap.getSourceAs(LOCATION_SOURCE)).thenReturn(locationSource);
+    when(mapboxMap.getStyle().getSourceAs(LOCATION_SOURCE)).thenReturn(locationSource);
     LayerSourceProvider sourceProvider = buildLayerProvider();
     when(sourceProvider.generateSource(any(Feature.class))).thenReturn(locationSource);
     LayerBitmapProvider bitmapProvider = mock(LayerBitmapProvider.class);

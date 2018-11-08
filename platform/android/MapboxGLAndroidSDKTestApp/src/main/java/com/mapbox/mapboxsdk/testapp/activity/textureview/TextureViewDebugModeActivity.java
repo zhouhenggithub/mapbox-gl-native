@@ -85,7 +85,7 @@ public class TextureViewDebugModeActivity extends AppCompatActivity implements O
 
     mapView.addOnDidFinishLoadingStyleListener(() -> {
       if (mapboxMap != null) {
-        setupNavigationView(mapboxMap.getLayers());
+        setupNavigationView(mapboxMap.getStyle().getLayers());
       }
     });
 
@@ -99,7 +99,7 @@ public class TextureViewDebugModeActivity extends AppCompatActivity implements O
   public void onMapReady(MapboxMap map) {
     mapboxMap = map;
 
-    setupNavigationView(mapboxMap.getLayers());
+    setupNavigationView(mapboxMap.getStyle().getLayers());
     setupZoomView();
     setFpsView();
   }

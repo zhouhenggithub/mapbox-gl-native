@@ -84,7 +84,7 @@ public class DebugModeActivity extends AppCompatActivity implements OnMapReadyCa
 
     mapView.addOnDidFinishLoadingStyleListener(() -> {
       if (mapboxMap != null) {
-        setupNavigationView(mapboxMap.getLayers());
+        setupNavigationView(mapboxMap.getStyle().getLayers());
       }
     });
 
@@ -98,9 +98,7 @@ public class DebugModeActivity extends AppCompatActivity implements OnMapReadyCa
   public void onMapReady(MapboxMap map) {
     mapboxMap = map;
 
-    setupNavigationView(mapboxMap.getLayers());
-
-    setupNavigationView(mapboxMap.getLayers());
+    setupNavigationView(mapboxMap.getStyle().getLayers());
     setupZoomView();
     setFpsView();
   }
