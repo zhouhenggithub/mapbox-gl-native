@@ -99,7 +99,7 @@ public final class MapboxMap {
     setPrefetchesTiles(options);
   }
 
-  public Style getStyle(){
+  public Style getStyle() {
     return style;
   }
 
@@ -703,6 +703,11 @@ public final class MapboxMap {
   //
   // Styling
   //
+
+  public void setStyle(Style.Builder builder) {
+
+  }
+
 
   /**
    * <p>
