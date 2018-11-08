@@ -39,7 +39,7 @@ import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdate;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.constants.MapboxConstants;
-import com.mapbox.mapboxsdk.constants.Style;
+import com.mapbox.mapboxsdk.maps.Style;
 import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.geometry.LatLngBounds;
 import com.mapbox.mapboxsdk.location.LocationComponent;
@@ -80,13 +80,13 @@ public final class MapboxMap {
   private LocationComponent locationComponent;
   private MapboxMap.OnFpsChangedListener onFpsChangedListener;
 
-  private com.mapbox.mapboxsdk.maps.Style style;
+  private Style style;
 
   MapboxMap(NativeMapView map, Transform transform, UiSettings ui, Projection projection,
             OnGesturesManagerInteractionListener listener, AnnotationManager annotations,
             CameraChangeDispatcher cameraChangeDispatcher, MapChangeReceiver mapChangeReceiver) {
     this.nativeMapView = map;
-    this.style = new com.mapbox.mapboxsdk.maps.Style(nativeMapView);
+    this.style = new Style(nativeMapView);
     this.uiSettings = ui;
     this.projection = projection;
     this.annotationManager = annotations.bind(this);
@@ -108,7 +108,7 @@ public final class MapboxMap {
     setPrefetchesTiles(options);
   }
 
-  public com.mapbox.mapboxsdk.maps.Style getStyle(){
+  public Style getStyle(){
     return style;
   }
 
@@ -226,48 +226,6 @@ public final class MapboxMap {
   }
 
   // Style
-
-  /**
-   * <p>
-   * Get the animation duration for style changes.
-   * </p>
-   * The default value is zero, so any changes take effect without animation.
-   *
-   * @return Duration in milliseconds
-   */
-  public long getTransitionDuration() {
-    return nativeMapView.getTransitionDuration();
-  }
-
-  /**
-   * Set the animation duration for style changes.
-   *
-   * @param durationMs Duration in milliseconds
-   */
-  public void setTransitionDuration(long durationMs) {
-    nativeMapView.setTransitionDuration(durationMs);
-  }
-
-  /**
-   * <p>
-   * Get the animation delay for style changes.
-   * </p>
-   * The default value is zero, so any changes begin to animate immediately.
-   *
-   * @return Delay in milliseconds
-   */
-  public long getTransitionDelay() {
-    return nativeMapView.getTransitionDelay();
-  }
-
-  /**
-   * Set the animation delay for style changes.
-   *
-   * @param delayMs Delay in milliseconds
-   */
-  public void setTransitionDelay(long delayMs) {
-    nativeMapView.setTransitionDelay(delayMs);
-  }
 
   /**
    * Sets tile pre-fetching from MapboxOptions.
