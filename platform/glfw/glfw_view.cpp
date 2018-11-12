@@ -266,13 +266,17 @@ void GLFWView::onKey(GLFWwindow *window, int key, int /*scancode*/, int action, 
                 double distance = routeProgress * routeDistance;
                 auto point = ruler.along(lineString, distance);
                 auto latLng = routeMap->getLatLng();
-                routeMap->setLatLng({ point.y, point.x });
                 double bearing = ruler.bearing({ latLng.longitude(), latLng.latitude() }, point);
                 double easing = bearing - routeMap->getBearing();
                 easing += easing > 180.0 ? -360.0 : easing < -180 ? 360.0 : 0;
-                routeMap->setBearing(routeMap->getBearing() + (easing / 20));
-                routeMap->setPitch(60.0);
-                routeMap->setZoom(18.0);
+
+                mbgl::CameraOptions cameraOptions;
+                cameraOptions.center = { point.y, point.x };
+                cameraOptions.zoom = 18.0;
+                cameraOptions.pitch = 60.0;
+                cameraOptions.angle = routeMap->getBearing() + (easing / 20);
+
+                routeMap->jumpTo(cameraOptions);
             };
             view->animateRouteCallback(view->map);
         } break;
