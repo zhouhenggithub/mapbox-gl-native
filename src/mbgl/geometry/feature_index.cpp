@@ -155,7 +155,7 @@ void FeatureIndex::addFeature(
             assert(geometryTileFeature);
         }
 
-        if (!renderLayer->hasSymbols() &&
+        if (!renderLayer->getSymbolInterface() &&
              !renderLayer->queryIntersectsFeature(queryGeometry, *geometryTileFeature, tileID.z, transformState, pixelsToTileUnits, posMatrix)) {
             continue;
         }

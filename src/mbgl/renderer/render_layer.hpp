@@ -17,6 +17,7 @@ class TransitionParameters;
 class PropertyEvaluationParameters;
 class PaintParameters;
 class RenderSource;
+class RenderLayerSymbolInterface;
 class RenderTile;
 class TransformState;
 
@@ -46,8 +47,8 @@ public:
     // Returns true if the layer requires 3D rendering pass.
     virtual bool has3D() const;
 
-    // Returns true if the layer has symbols.
-    virtual bool hasSymbols() const;
+    // Returns instance of RenderLayerSymbolInterface if RenderLayer supports it.
+    virtual const RenderLayerSymbolInterface* getSymbolInterface() const;
 
     const std::string& getID() const;
 
@@ -95,8 +96,6 @@ public:
 
     // TODO: Only for background layers.
     virtual optional<Color> getSolidBackground() const;
-
-    const RenderTiles& getRenderTiles() const { return renderTiles; }
 
     friend std::string layoutKey(const RenderLayer&);
 

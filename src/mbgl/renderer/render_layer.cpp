@@ -95,8 +95,8 @@ bool RenderLayer::needsClipping() const {
     return false;
 }
 
-bool RenderLayer::hasSymbols() const {
-    return false;
+const RenderLayerSymbolInterface* RenderLayer::getSymbolInterface() const {
+    return nullptr;
 }
 
 void RenderLayer::update() {

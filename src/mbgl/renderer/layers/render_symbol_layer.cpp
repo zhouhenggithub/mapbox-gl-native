@@ -77,8 +77,20 @@ bool RenderSymbolLayer::hasCrossfade() const {
     return false;
 }
 
-bool RenderSymbolLayer::hasSymbols() const {
-    return true;
+const std::string& RenderSymbolLayer::layerID() const {
+    return RenderLayer::getID();
+}
+
+const RenderLayerSymbolInterface* RenderSymbolLayer::getSymbolInterface() const {
+    return this;
+}
+
+const std::vector<std::reference_wrapper<RenderTile>>& RenderSymbolLayer::getRenderTiles() const {
+    return renderTiles;
+}
+
+SymbolBucket* RenderSymbolLayer::getSymbolBucket(const RenderTile& renderTile) const {
+    return renderTile.tile.getBucket<SymbolBucket>(*baseImpl);
 }
 
 void RenderSymbolLayer::render(PaintParameters& parameters, RenderSource*) {

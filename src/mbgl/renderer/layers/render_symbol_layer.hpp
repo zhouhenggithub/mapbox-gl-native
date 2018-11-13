@@ -2,6 +2,7 @@
 
 #include <mbgl/text/glyph.hpp>
 #include <mbgl/renderer/render_layer.hpp>
+#include <mbgl/renderer/layers/render_layer_symbol_interface.hpp>
 #include <mbgl/style/image_impl.hpp>
 #include <mbgl/style/layers/symbol_layer_impl.hpp>
 #include <mbgl/style/layers/symbol_layer_properties.hpp>
@@ -56,7 +57,7 @@ class BucketParameters;
 class SymbolLayout;
 class GeometryTileLayer;
 
-class RenderSymbolLayer: public RenderLayer {
+class RenderSymbolLayer: public RenderLayer, public RenderLayerSymbolInterface {
 public:
     RenderSymbolLayer(Immutable<style::SymbolLayer::Impl>);
     ~RenderSymbolLayer() final = default;
@@ -65,7 +66,6 @@ public:
     void evaluate(const PropertyEvaluationParameters&) override;
     bool hasTransition() const override;
     bool hasCrossfade() const override;
-    bool hasSymbols() const final;
     void render(PaintParameters&, RenderSource*) override;
 
     style::IconPaintProperties::PossiblyEvaluated iconPaintProperties() const;
@@ -81,6 +81,12 @@ public:
                                                GlyphDependencies&,
                                                ImageDependencies&) const override;
     bool requiresLayout() const final;
+
+    // RenderLayerSymbolInterface overrides
+    const RenderLayerSymbolInterface* getSymbolInterface() const final;
+    const std::string& layerID() const final;
+    const std::vector<std::reference_wrapper<RenderTile>>& getRenderTiles() const final;
+    SymbolBucket* getSymbolBucket(const RenderTile&) const final;
 
     // Paint properties
     style::SymbolPaintProperties::Unevaluated unevaluated;

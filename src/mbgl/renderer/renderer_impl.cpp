@@ -326,7 +326,7 @@ void Renderer::Impl::render(const UpdateParameters& updateParameters) {
 
         std::vector<RenderItem> renderItemsWithSymbols;
         std::copy_if(order.rbegin(), order.rend(), std::back_inserter(renderItemsWithSymbols),
-                [](const auto& item) { return item.layer.hasSymbols(); });
+                [](const auto& item) { return item.layer.getSymbolInterface() != nullptr; });
 
         bool symbolBucketsChanged = false;
         const bool placementChanged = !placement->stillRecent(parameters.timePoint);
@@ -338,11 +338,11 @@ void Renderer::Impl::render(const UpdateParameters& updateParameters) {
         }
 
         for (const auto& item : renderItemsWithSymbols) {
-            if (crossTileSymbolIndex.addLayer(item.layer, parameters.state.getLatLng().longitude())) symbolBucketsChanged = true;
+            if (crossTileSymbolIndex.addLayer(*item.layer.getSymbolInterface(), parameters.state.getLatLng().longitude())) symbolBucketsChanged = true;
 
             if (newPlacement) {
                 usedSymbolLayers.insert(item.layer.getID());
-                newPlacement->placeLayer(item.layer, parameters.projMatrix, parameters.debugOptions & MapDebugOptions::Collision);
+                newPlacement->placeLayer(*item.layer.getSymbolInterface(), parameters.projMatrix, parameters.debugOptions & MapDebugOptions::Collision);
             }
         }
 
@@ -359,7 +359,7 @@ void Renderer::Impl::render(const UpdateParameters& updateParameters) {
 
         if (placementChanged || symbolBucketsChanged) {
             for (const auto& item : renderItemsWithSymbols) {
-                placement->updateLayerOpacities(item.layer);
+                placement->updateLayerOpacities(*item.layer.getSymbolInterface());
             }
         }
     }
