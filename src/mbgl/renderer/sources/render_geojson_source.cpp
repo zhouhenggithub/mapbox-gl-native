@@ -11,10 +11,87 @@ namespace mbgl {
 
 using namespace style;
 
+namespace {
+template<typename T, typename C>
+optional<T> getProperty(const C& cont, const typename C::key_type& name) {
+    const auto it = cont.find(name);
+    if (it == cont.end() || !(it->second.template is<T>())) {
+        return nullopt;
+    }
+    return it->second.template get<T>();
+}
+} // namespace
+
+class RenderGeoJSONSource::RenderGeoJSONSourceFeatureExtension : public RenderSource::FeatureExtension {
+public:
+    using FeatureExtensionValue = mapbox::util::variant<NullValue, Value, std::vector<Feature>>;
+    using FeatureExtensionGetterFn = FeatureExtensionValue (*)(std::shared_ptr<style::GeoJSONData>, uint64_t, const optional<std::map<std::string, Value>>&);
+    RenderGeoJSONSourceFeatureExtension() {
+        featureGetters["children"] = [](auto clusterData,
+                                        auto clusterID,
+                                        const auto&) -> FeatureExtensionValue {
+            return clusterData->getChildren(clusterID);
+        };
+
+        featureGetters["leaves"] = [](auto clusterData,
+                                      auto clusterID,
+                                      const auto& args) -> FeatureExtensionValue {
+            if (args) {
+                const auto limit = getProperty<uint64_t>(*args, "limit");
+                const auto offset = getProperty<uint64_t>(*args, "offset");
+                // Offset cannot be set without limit.
+                if (limit) {
+                    if (offset) {
+                        return clusterData->getLeaves(clusterID, *limit, *offset);
+                    }
+                    return clusterData->getLeaves(clusterID, *limit);
+                }
+            }
+
+            return clusterData->getLeaves(clusterID);
+        };
+
+        featureGetters["expansion_zoom"] = [](auto clusterData,
+                                              auto clusterID,
+                                              const auto&) -> FeatureExtensionValue {
+            return static_cast<uint64_t>(clusterData->getClusterExpansionZoom(clusterID));
+        };
+    }
+
+    FeatureExtensionValue query(const Feature& feature,
+                                const std::string& extensionField,
+                                const optional<std::map<std::string, Value>>& args) const final {
+        const auto extensionIt = featureGetters.find(extensionField);
+        if (extensionIt == featureGetters.end()) {
+            return {};
+        }
+
+        const auto clusterID = getProperty<uint64_t>(feature.properties, "cluster_id");
+        if (!clusterID) {
+            return {};
+        }
+
+        auto jsonData = data.lock();
+        if (!jsonData) {
+            return {};
+        }
+
+        return extensionIt->second(std::move(jsonData), *clusterID, args);
+    }
+
+    void setData(std::weak_ptr<style::GeoJSONData> data_) { data = data_; }
+
+private:
+    std::weak_ptr<style::GeoJSONData> data;
+    std::map<std::string, FeatureExtensionGetterFn> featureGetters;
+};
+
 RenderGeoJSONSource::RenderGeoJSONSource(Immutable<style::GeoJSONSource::Impl> impl_)
     : RenderSource(impl_) {
     tilePyramid.setObserver(this);
 }
+
+RenderGeoJSONSource::~RenderGeoJSONSource() = default;
 
 const style::GeoJSONSource::Impl& RenderGeoJSONSource::impl() const {
     return static_cast<const style::GeoJSONSource::Impl&>(*baseImpl);
@@ -92,6 +169,14 @@ RenderGeoJSONSource::queryRenderedFeatures(const ScreenLineString& geometry,
 
 std::vector<Feature> RenderGeoJSONSource::querySourceFeatures(const SourceQueryOptions& options) const {
     return tilePyramid.querySourceFeatures(options);
+}
+
+const RenderSource::FeatureExtension* RenderGeoJSONSource::getFeatureExtension() const {
+    if (!extension) {
+        extension = std::make_unique<RenderGeoJSONSourceFeatureExtension>();
+    }
+    extension->setData(data);
+    return extension.get();
 }
 
 void RenderGeoJSONSource::reduceMemoryUse() {

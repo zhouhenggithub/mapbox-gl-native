@@ -44,6 +44,14 @@ public:
     AnnotationIDs queryShapeAnnotations(const ScreenBox& box) const;
     AnnotationIDs getAnnotationIDs(const std::vector<Feature>&) const;
 
+    // Feature extension query
+    using FeatureExtensionValue = mapbox::util::variant<NullValue, Value, std::vector<Feature>>;
+    FeatureExtensionValue queryFeatureExtensions(const std::string& sourceID,
+                                                 const Feature& feature,
+                                                 const std::string& extension,
+                                                 const std::string& extensionField,
+                                                 const optional<std::map<std::string, Value>>& args = {}) const;
+
     // Debug
     void dumpDebugLogs();
 

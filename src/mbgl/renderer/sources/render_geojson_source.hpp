@@ -13,6 +13,7 @@ class GeoJSONData;
 class RenderGeoJSONSource : public RenderSource {
 public:
     RenderGeoJSONSource(Immutable<style::GeoJSONSource::Impl>);
+    ~RenderGeoJSONSource() final;
 
     bool isLoaded() const final;
 
@@ -36,6 +37,7 @@ public:
 
     std::vector<Feature>
     querySourceFeatures(const SourceQueryOptions&) const final;
+    const FeatureExtension* getFeatureExtension() const final;
 
     void reduceMemoryUse() final;
     void dumpDebugLogs() const final;
@@ -45,6 +47,8 @@ private:
 
     TilePyramid tilePyramid;
     std::weak_ptr<style::GeoJSONData> data;
+    class RenderGeoJSONSourceFeatureExtension;
+    mutable std::unique_ptr<RenderGeoJSONSourceFeatureExtension> extension;
 };
 
 template <>
