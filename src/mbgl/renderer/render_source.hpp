@@ -70,21 +70,19 @@ public:
     virtual std::vector<Feature>
     querySourceFeatures(const SourceQueryOptions&) const = 0;
 
+    virtual mapbox::util::variant<NullValue, Value, std::vector<Feature>>
+    queryFeatureExtensions(const Feature&,
+                           const std::string&,
+                           const std::string&,
+                           const optional<std::map<std::string, Value>>&) const {
+        return {};
+    }
+
     virtual void reduceMemoryUse() = 0;
 
     virtual void dumpDebugLogs() const = 0;
 
     void setObserver(RenderSourceObserver*);
-
-    class FeatureExtension {
-    public:
-        virtual ~FeatureExtension() = default;
-        virtual mapbox::util::variant<NullValue, Value, std::vector<Feature>>
-            query(const Feature&,
-                  const std::string& extensionField,
-                  const optional<std::map<std::string, Value>>& args) const = 0;
-    };
-    virtual const FeatureExtension* getFeatureExtension() const { return nullptr; };
 
     Immutable<style::Source::Impl> baseImpl;
 

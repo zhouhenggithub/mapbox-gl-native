@@ -784,11 +784,11 @@ std::vector<Feature> Renderer::Impl::querySourceFeatures(const std::string& sour
 Renderer::FeatureExtensionValue
 Renderer::Impl::queryFeatureExtensions(const std::string& sourceID,
                                        const Feature& feature,
-                                       const std::string&,
+                                       const std::string& extension,
                                        const std::string& extensionField,
                                        const optional<std::map<std::string, Value>>& args) const {
-    if (const auto* extension = getRenderSource(sourceID)->getFeatureExtension()) {
-        return extension->query(feature, extensionField, args);
+    if (RenderSource* renderSource = getRenderSource(sourceID)) {
+        return renderSource->queryFeatureExtensions(feature, extension, extensionField, args);
     }
     return {};
 }

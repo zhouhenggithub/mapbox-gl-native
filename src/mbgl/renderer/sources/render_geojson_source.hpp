@@ -37,7 +37,12 @@ public:
 
     std::vector<Feature>
     querySourceFeatures(const SourceQueryOptions&) const final;
-    const FeatureExtension* getFeatureExtension() const final;
+
+    mapbox::util::variant<NullValue, Value, std::vector<Feature>>
+    queryFeatureExtensions(const Feature& feature,
+                           const std::string& extension,
+                           const std::string& extensionField,
+                           const optional<std::map<std::string, Value>>& args) const final;
 
     void reduceMemoryUse() final;
     void dumpDebugLogs() const final;
@@ -47,8 +52,6 @@ private:
 
     TilePyramid tilePyramid;
     std::weak_ptr<style::GeoJSONData> data;
-    class RenderGeoJSONSourceFeatureExtension;
-    mutable std::unique_ptr<RenderGeoJSONSourceFeatureExtension> extension;
 };
 
 template <>
