@@ -8,6 +8,12 @@
 #include <mbgl/style/transition_options.hpp>
 #include <mbgl/style/layers/fill_extrusion_layer.hpp>
 #include <mbgl/style/expression/dsl.hpp>
+#include <mbgl/style/sources/geojson_source.hpp>
+#include <mbgl/style/layers/symbol_layer.hpp>
+#include <mbgl/style/expression/dsl.hpp>
+#include <mbgl/style/expression/format_expression.hpp>
+#include <mbgl/style/expression/formatted.hpp>
+#include <mbgl/style/conversion/function.hpp>
 #include <mbgl/util/logging.hpp>
 #include <mbgl/util/platform.hpp>
 #include <mbgl/util/string.hpp>
@@ -275,6 +281,30 @@ void GLFWView::onKey(GLFWwindow *window, int key, int /*scancode*/, int action, 
                 routeMap->setZoom(18.0);
             };
             view->animateRouteCallback(view->map);
+        } break;
+        case GLFW_KEY_T: {
+            auto source = std::make_unique<mbgl::style::GeoJSONSource>("GeoJSONSource");
+            source->setGeoJSON(mbgl::Geometry<double> { mbgl::Point<double>{ 0, 0 } });
+            view->map->getStyle().addSource(std::move(source));
+
+            auto layer = std::make_unique<mbgl::style::SymbolLayer>("SymbolLayer", "GeoJSONSource");
+            std::vector<mbgl::style::expression::FormatExpressionSection> sections;
+            /// XXX 1
+            sections.emplace_back(mbgl::style::conversion::convertTokenStringToExpression(std::string("foo")), mbgl::nullopt, mbgl::nullopt);
+            /// XXX 2
+            //sections.emplace_back(mbgl::style::expression::dsl::literal("foo"), mbgl::nullopt, mbgl::nullopt);
+            /// XXX 3
+            //std::vector<std::unique_ptr<mbgl::style::expression::Expression>> expressions;
+            //expressions.emplace_back(mbgl::style::expression::dsl::literal("foo"));
+            //sections.emplace_back(mbgl::style::expression::dsl::concat(std::move(expressions)), mbgl::nullopt, mbgl::nullopt);
+            /// WORKS
+            //sections.emplace_back(mbgl::style::expression::dsl::get("foo"), mbgl::nullopt, mbgl::nullopt);
+
+            std::unique_ptr<mbgl::style::expression::Expression> expression = std::make_unique<mbgl::style::expression::FormatExpression>(std::move(sections));
+            mbgl::style::PropertyValue<mbgl::style::expression::Formatted> formatValue {std::move(expression)};
+            layer->setTextField(std::move(formatValue));
+
+            view->map->getStyle().addLayer(std::move(layer));
         } break;
         case GLFW_KEY_E:
             view->toggle3DExtrusions(!view->show3DExtrusions);
